@@ -1,32 +1,39 @@
 import pickle
 from Distance import Distance
 from Knn import KNN
-
-
-import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, RepeatedStratifiedKFold
 
 
 # the data is already preprocessed
 dataset, labels = pickle.load(open("../datasets/part1_dataset.data", "rb"))
-print(dataset)
-print(labels)
+
+X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.3, random_state=42)
+rsk_folds = RepeatedStratifiedKFold(n_splits=10, n_repeats=5, random_state=0)
 
 
 
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot(111, projection='3d')
+K = [5, 10, 15, 30]
+similarity_function = ["Cosine", "Minkowski", "Mahalanobis"]
 
-# Plot each class with a different color
-unique_labels = set(labels)
-for label in unique_labels:
-    points = dataset[labels == label]  # Assuming labels are numpy-compatible
-    ax.scatter(points[:, 0], points[:, 1], points[:, 2], label=f"Class {label}")
+p_parameter = [2, 3]
 
-# Add plot details
-ax.set_title("3D Dataset Visualization")
-ax.set_xlabel("Feature 1")
-ax.set_ylabel("Feature 2")
-ax.set_zlabel("Feature 3")
-ax.legend()
-plt.savefig("plot.png")
-print("Plot saved as 'plot.png'")
+combination = 1
+
+for k in K:
+    for s_func in similarity_function:
+        if s_func != similarity_function[1]:
+            print(f"Hyperparamter Combination: {combination}, K = {k}, Similarity Function: {s_func}")
+            combination += 1
+        else:
+            for p in p_parameter:
+                print(f"Hyperparamter Combination: {combination}, K = {k}, Similarity Function: {s_func}, p = {p}")
+                combination += 1
+
+
+
+
+
+
+
+
+
