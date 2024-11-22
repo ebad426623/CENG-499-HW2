@@ -5,6 +5,7 @@ from Knn import KNN
 
 import matplotlib.pyplot as plt
 
+
 # the data is already preprocessed
 dataset, labels = pickle.load(open("../datasets/part1_dataset.data", "rb"))
 print(dataset)

@@ -1,3 +1,5 @@
+import numpy as np
+
 class KNN:
     def __init__(self, dataset, data_label, similarity_function, similarity_function_parameters=None, K=1):
         """
@@ -14,6 +16,24 @@ class KNN:
         self.similarity_function_parameters = similarity_function_parameters
 
     def predict(self, instance):
-        pass
+        distances = []
+        
+        i = 0
+        for data in self.dataset:
+            distance = self.similarity_function(instance, data, self.similarity_function_parameters)
+            distances.append({'label': self.dataset_label[i], 'distance': distance})
+            i += 1
 
+        distances.sort(key=lambda x: x['distance'])
+        nearest_neighbors = distances[:self.K]
+        neighbor_labels = [label for label, _ in nearest_neighbors]
+        return np.bincount(neighbor_labels).argmax()
+
+        
+        
+
+
+        
+
+    
 
