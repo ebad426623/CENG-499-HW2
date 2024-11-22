@@ -21,10 +21,10 @@ class KNN:
         
         i = 0
         for data in self.dataset:
-            if self.similarity_function == Distance.calculateCosineDistance: 
-                distance = self.similarity_function(instance, data)
-            else:
-                distance = self.similarity_function(instance, data, self.similarity_function_parameters)
+            #if self.similarity_function == Distance.calculateCosineDistance: 
+            #    distance = self.similarity_function(instance, data)
+            #else:
+            distance = self.similarity_function(instance, data, self.similarity_function_parameters)
             distances.append({'label': self.dataset_label[i], 'distance': distance})
             i += 1
 

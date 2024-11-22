@@ -4,7 +4,7 @@ import math
 class Distance:
 
     @staticmethod
-    def calculateCosineDistance(x, y):
+    def calculateCosineDistance(x, y, _ = None):
         dot_prodcut = np.dot(x, y)
         x_norm = np.linalg.norm(x)
         y_norm = np.linalg.norm(y)
