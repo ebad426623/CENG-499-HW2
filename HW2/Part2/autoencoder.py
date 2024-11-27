@@ -11,12 +11,31 @@ class AutoEncoderNetwork(nn.Module):
         """
         Your autoencoder model definition should go here
         """
+
+
+        # Input -> Hidden -> Bottleneck
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, int(input_dim / 2)),
+            nn.ReLU(),
+            nn.Linear(int(input_dim / 2), output_dim)
+        )
+
+        # Bottleneck -> Hidden -> Output
+        self.decoder = nn.Sequential(
+            nn.Linear(output_dim, int(input_dim / 2)),
+            nn.ReLU(),
+            nn.Linear(int(input_dim / 2), input_dim)
+        )
+
+
     def project(self, x: torch.Tensor) -> torch.Tensor:
         """
         This function should map a given data matrix onto the bottleneck hidden layer
         :param x: the input data matrix of type torch.Tensor
         :return: the resulting projected data matrix of type torch.Tensor
         """
+        
+        return self.encoder(x)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -24,6 +43,9 @@ class AutoEncoderNetwork(nn.Module):
         :param x: the input data matrix of type torch array
         :return: the neural network output as torch array
         """
+
+        encoded_data = self.project(x)
+        return self.decoder(encoded_data)
 
 class AutoEncoder:
 
@@ -37,11 +59,14 @@ class AutoEncoder:
         """
         self.input_dim = input_dim
         self.projection_matrix = projection_dim
-        self.iteration_count = iteration_count
+        self.epochs = iteration_count
         self.autoencoder_model = AutoEncoder(input_dim, projection_dim)
         """
             Your optimizer and loss definitions should go here
         """
+        
+        self.optimzer = torch.optim.Adam(self.autoencoder_model.parameters(), lr=learning_rate)
+        self.loss = nn.MSELoss()
 
     def fit(self, x: torch.Tensor) -> None:
         """
@@ -53,6 +78,15 @@ class AutoEncoder:
         please do not forget to put the neural network model into the training mode before training
         """
 
+        self.autoencoder_model.train()
+        for _ in range(self.epochs):
+            self.optimzer.zero_grad()
+            decoded_data = self.autoencoder_model(x)
+            loss = self.loss(decoded_data, x)
+            loss.backward()
+            self.optimzer.step()
+
+
     def transform(self, x: torch.Tensor) -> torch.Tensor:
         """
         After training the nn a given dataset,
@@ -61,3 +95,8 @@ class AutoEncoder:
         :return: transformed (projected) data instances (projected data matrix)
         please do not forget to put the neural network model into the evaluation mode before projecting data instances
         """
+        self.autoencoder_model.eval()
+        with torch.no_grad():
+            projected_data = self.autoencoder_model.project(x)
+        return projected_data
+
