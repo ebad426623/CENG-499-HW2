@@ -60,7 +60,7 @@ class AutoEncoder:
         self.input_dim = input_dim
         self.projection_matrix = projection_dim
         self.epochs = iteration_count
-        self.autoencoder_model = AutoEncoder(input_dim, projection_dim)
+        self.autoencoder_model = AutoEncoderNetwork(input_dim, projection_dim)
         """
             Your optimizer and loss definitions should go here
         """
@@ -79,6 +79,8 @@ class AutoEncoder:
         """
 
         self.autoencoder_model.train()
+        x = torch.tensor(x, dtype=torch.float32)
+        
         for _ in range(self.epochs):
             self.optimzer.zero_grad()
             decoded_data = self.autoencoder_model(x)
@@ -97,6 +99,7 @@ class AutoEncoder:
         """
         self.autoencoder_model.eval()
         with torch.no_grad():
+            x = torch.tensor(x, dtype=torch.float32)
             projected_data = self.autoencoder_model.project(x)
         return projected_data
 

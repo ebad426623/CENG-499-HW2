@@ -20,7 +20,7 @@ class PCA:
         """
 
         # Standardizing my Data along the features
-        standardized_x = (x - x.mean(axis = 0)) / x.std(axis=0)
+        standardized_x = (x - x.mean(axis = 0))
 
         # Finding Covaraince Matrix
         covariance_matrix = np.cov(standardized_x, rowvar=False)
@@ -44,5 +44,5 @@ class PCA:
         this function should utilize self.projection_matrix for the operations
         """
 
-        standardized_x = (x - x.mean(axis = 0)) / x.std(axis=0)
+        standardized_x = (x - x.mean(axis = 0)) 
         return np.matmul(standardized_x, self.projection_matrix)
