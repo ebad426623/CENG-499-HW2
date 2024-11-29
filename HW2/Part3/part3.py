@@ -113,6 +113,8 @@ def apply_hac():
     for metric in metrics:
         for linkage in linkages:
 
+            sil_scores = []
+
             hac = AgglomerativeClustering(n_clusters=None, metric=metric, linkage=linkage, distance_threshold=0)
             hac.fit(dataset)
 
@@ -129,6 +131,7 @@ def apply_hac():
                 hac = AgglomerativeClustering(n_clusters=k, metric=metric, linkage=linkage, distance_threshold=None)
                 predicted = hac.fit_predict(dataset)
                 silhouette_avg = silhouette_score(dataset, predicted)
+                sil_scores.append(silhouette_avg)
                                 
                 if silhouette_avg > each_best_score:
                     each_best_score = silhouette_avg
@@ -141,6 +144,14 @@ def apply_hac():
             if each_best_score > best_score:
                 best_score = each_best_score
                 best_config = each_best_config
+
+            plt.figure(figsize=(8, 5))
+            plt.plot(range(2,6), sil_scores, marker='o')
+            plt.title(f"Silhouette Scores for {linkage} Linkage with {metric} Metric")
+            plt.xlabel("Number of Clusters (K)")
+            plt.ylabel("Silhouette Score")
+            plt.savefig(f"silhouette_scores_{linkage}_{metric}.png")
+            plt.clf()
 
     print(f"Best HAC Configuration:")
     print(f"Linkage: {best_config[0]}, Metric: {best_config[1]}, K = {best_config[2]}, Silhouette Score: {best_score:.3f}")
