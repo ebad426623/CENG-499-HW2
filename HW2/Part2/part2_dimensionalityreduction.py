@@ -11,6 +11,7 @@ dataset2 = pickle.load(open("../datasets/part2_dataset_2.data", "rb"))
 
 
 def plot_2d(data, title, x, y):
+    plt.clf()
     plt.scatter(data[:, 0], data[:, 1])
     plt.title(title)
     plt.xlabel(x)
