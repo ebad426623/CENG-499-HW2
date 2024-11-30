@@ -21,12 +21,10 @@ def find_elbow_and_plot(dataset, dataset_name):
     silhouette_conf_intervals = []
 
     for k in range(2, max_K + 1):
-        # Collect loss and silhouette scores for each run
         losses = []
         silhouettes = []
 
         for _ in range(num_runs):
-            # Run k-medoids with repeats
             repeat_losses = []
             repeat_silhouettes = []
 
@@ -42,7 +40,7 @@ def find_elbow_and_plot(dataset, dataset_name):
             losses.append(np.mean(repeat_losses))
             silhouettes.append(np.mean(repeat_silhouettes))
 
-        # Compute the average and confidence intervals for loss and silhouette
+
         avg_loss_val = np.mean(losses)
         loss_conf_interval = 1.96 * (np.std(losses) / np.sqrt(len(losses)))
         avg_loss.append(avg_loss_val)
@@ -53,7 +51,6 @@ def find_elbow_and_plot(dataset, dataset_name):
         avg_silhouette.append(avg_silhouette_val)
         silhouette_conf_intervals.append(silhouette_conf_interval)
 
-        # Print the results for this k
         print(f"For K = {k}")
         print(f"Mean Loss: {avg_loss_val:.2f}, Interval: {loss_conf_interval:.3f}")
         print(f"Mean Silhouette: {avg_silhouette_val:.2f}, Interval: {silhouette_conf_interval:.3f}")
@@ -81,6 +78,6 @@ def find_elbow_and_plot(dataset, dataset_name):
     plt.legend()
     plt.savefig(f"{dataset_name}_kmedoids_silhouette_plot.png")
 
-# Call the function for both datasets
+
 find_elbow_and_plot(dataset1, "Dataset 1")
 find_elbow_and_plot(dataset2, "Dataset 2")

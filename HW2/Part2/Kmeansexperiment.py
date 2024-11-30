@@ -10,11 +10,6 @@ dataset2 = pickle.load(open("../datasets/part2_dataset_2.data", "rb"))
 
 
 
-max_K = 10
-num_runs = 10
-
-
-
 def find_elbow_and_plot(dataset, dataset_name):
     print(dataset_name)
 
@@ -29,11 +24,11 @@ def find_elbow_and_plot(dataset, dataset_name):
     silohoutte_conf_intervals = []
     
 
-    for k in range(2, max_K + 1):
+    for k in range(2, 11):
         losses = []
         silohouttes = []
 
-        for _ in range(num_runs + 1):
+        for _ in range(11):
             
             kmeans = KMeans(n_clusters=k, init="k-means++", random_state=None, n_init=10)
             kmeans.fit(dataset)
@@ -65,11 +60,9 @@ def find_elbow_and_plot(dataset, dataset_name):
         print(f"Mean Silohoutte: {avg_s:.2f}, Interval: {silohoutte_interval:.3f}, Confidence Interval ({s_cf[0]:.3f}, {s_cf[1]:.3f})")
         print()
     
-    
-    ks = range(2, max_K + 1)
 
     plt.figure()
-    plt.errorbar(ks, avg_loss, yerr = l_i, capsize=5, label="Loss", fmt='-o')
+    plt.errorbar(range(2, 11), avg_loss, yerr = l_i, capsize=5, label="Loss", fmt='-o')
     plt.title(f"Elbow Method (Loss) for {dataset_name}")
     plt.xlabel("Number of Clusters (K)")
     plt.ylabel("Loss")
@@ -79,7 +72,7 @@ def find_elbow_and_plot(dataset, dataset_name):
     
 
     plt.figure()
-    plt.errorbar(ks, avg_silohoutte, yerr = s_i, capsize=5, label="Silhouette", fmt='-o')
+    plt.errorbar(range(2, 11), avg_silohoutte, yerr = s_i, capsize=5, label="Silhouette", fmt='-o')
     plt.title(f"Elbow Method (Silhouette) for {dataset_name}")
     plt.xlabel("Number of Clusters (K)")
     plt.ylabel("Silhouette Score")
