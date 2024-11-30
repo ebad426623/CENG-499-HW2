@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.metrics import silhouette_score, silhouette_samples
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as cm
 from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster.hierarchy import dendrogram
 

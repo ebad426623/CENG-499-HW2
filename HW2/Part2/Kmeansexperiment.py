@@ -40,7 +40,6 @@ def find_elbow_and_plot(dataset, dataset_name):
             loss = kmeans.inertia_
             losses.append(loss)
 
-            # https://scikit-learn.org/1.5/modules/generated/sklearn.metrics.silhouette_score.html
             silohoutte = silhouette_score(dataset, kmeans.fit_predict(dataset))
             silohouttes.append(silohoutte)
         
