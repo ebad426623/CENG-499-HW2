@@ -3,31 +3,19 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.metrics import silhouette_score, silhouette_samples
 import matplotlib.pyplot as plt
+import matplotlib.pyplot as cm
 from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster.hierarchy import dendrogram
 
 
 # The dataset is already preprocessed...
 dataset = pickle.load(open("../datasets/part3_dataset.data", "rb"))
-"""print(dataset[0])
-
-plt.figure(figsize=(10, 7))
-plt.scatter(dataset[:, 5], dataset[:, 1], s=30, alpha=0.7, edgecolor='k')
-plt.title("Scatter Plot of the Dataset")
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-
-# Save the plot as an image file
-plt.savefig("initial_data_scatter_plot.png")"""
-
-
-
 
 def apply_dbscan():
     metrics = ['euclidean', 'cosine']
-    eps_values = np.arange(0.1, 3, 0.3)
+    eps_values = [0.05, 0.1, 0.15, 0.2]
     min_samples_values = [2, 3, 5]
-
+    config = 0
     best_config = []
 
     for eps in eps_values:
@@ -49,17 +37,21 @@ def apply_dbscan():
 
                 number_of_clusters = len(set(predicted)) - (1 if -1 in predicted else 0)
 
-                if number_of_clusters >= 2:                
+                if number_of_clusters >= 2:  
+                    config += 1              
                     clustered_points = dataset[cluster_point_indices]
                     cluster_labels = predicted[cluster_point_indices]
                     
                     silhouette_avg = silhouette_score(clustered_points, cluster_labels)
                     best_config.append((metric, eps, min_samples, silhouette_avg, number_of_clusters))
+                    print(f"Best Configuration {config}:")
+                    print(f"Epsilon: {eps}, Min_Samples: {min_samples}, Metrics: {metric}, Silhouette Score: {silhouette_avg:.4f}")
+                    print()
 
     
     best_config = sorted(best_config, key=lambda x: x[3], reverse=True)[:4]
 
-    for metric, eps, min_samples, _, K in best_config:
+    for metric, eps, min_samples, score, K in best_config:
 
         model = DBSCAN(eps=eps, min_samples=min_samples, metric=metric)
         labels = model.fit_predict(dataset)
@@ -68,7 +60,8 @@ def apply_dbscan():
         
         
         plt.figure(figsize=(10, 6))
-        plt.scatter(range(len(silhouette_vals)), silhouette_vals)
+        plt.scatter(range(len(silhouette_vals)), silhouette_vals, c=labels)
+        plt.axhline(y = score, color = "red")
         plt.title(f"Silhouette Plot (Metric: {metric}, Eps: {eps}, Min Samples: {min_samples})")
         plt.xlabel('Sample index')
         plt.ylabel('Silhouette value')
@@ -108,7 +101,6 @@ def apply_hac():
     
     best_config = None
     best_score = -1
-    config = 0
 
     for metric in metrics:
         for linkage in linkages:
@@ -120,7 +112,7 @@ def apply_hac():
 
             plt.figure(figsize=(15, 15))
             plt.title(f"HAC Dendrogram - Linkage: {linkage}, Metric: {metric}")
-            plot_dendrogram(hac, truncate_mode='level', p=10)
+            plot_dendrogram(hac, truncate_mode='lastp', p=200)
             plt.savefig(f"dendrogram_{linkage}_{metric}.png")
             plt.clf()
 
@@ -156,5 +148,9 @@ def apply_hac():
     print(f"Best HAC Configuration:")
     print(f"Linkage: {best_config[0]}, Metric: {best_config[1]}, K = {best_config[2]}, Silhouette Score: {best_score:.3f}")
 
+print("Performing DBSCAN")
 apply_dbscan()
+
+print()
+print("Performing HAC")
 apply_hac()
