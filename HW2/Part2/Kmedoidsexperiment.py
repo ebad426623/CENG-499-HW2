@@ -8,10 +8,6 @@ from sklearn.metrics import silhouette_score
 dataset1 = pickle.load(open("../datasets/part2_dataset_1.data", "rb"))
 dataset2 = pickle.load(open("../datasets/part2_dataset_2.data", "rb"))
 
-max_K = 10
-num_runs = 10
-num_repeats = 10
-
 def find_elbow_and_plot(dataset, dataset_name):
     print(dataset_name)
 
@@ -20,16 +16,16 @@ def find_elbow_and_plot(dataset, dataset_name):
     avg_silhouette = []
     silhouette_conf_intervals = []
 
-    for k in range(2, max_K + 1):
+    for k in range(2, 11):
         losses = []
         silhouettes = []
 
-        for _ in range(num_runs):
+        for _ in range(10):
             repeat_losses = []
             repeat_silhouettes = []
 
-            for _ in range(num_repeats):
-                kmedoids = KMedoids(n_clusters=k, random_state=None, method="pam")
+            for _ in range(10):
+                kmedoids = KMedoids(n_clusters=k, init='random')
                 kmedoids.fit(dataset)
                 inertia = kmedoids.inertia_
                 repeat_losses.append(inertia)
@@ -37,8 +33,8 @@ def find_elbow_and_plot(dataset, dataset_name):
                 silhouette = silhouette_score(dataset, kmedoids.labels_)
                 repeat_silhouettes.append(silhouette)
 
-            losses.append(np.mean(repeat_losses))
-            silhouettes.append(np.mean(repeat_silhouettes))
+            losses.append(np.min(repeat_losses))
+            silhouettes.append(np.max(repeat_silhouettes))
 
 
         avg_loss_val = np.mean(losses)
@@ -56,11 +52,10 @@ def find_elbow_and_plot(dataset, dataset_name):
         print(f"Mean Silhouette: {avg_silhouette_val:.2f}, Interval: {silhouette_conf_interval:.3f}")
         print()
 
-    ks = range(2, max_K + 1)
 
     # Plot Loss
     plt.figure()
-    plt.errorbar(ks, avg_loss, yerr=loss_conf_intervals, capsize=5, label="Loss", fmt='-o')
+    plt.errorbar(range(2, 11), avg_loss, yerr=loss_conf_intervals, capsize=5, label="Loss", fmt='-o')
     plt.title(f"Elbow Method (Loss) for {dataset_name}")
     plt.xlabel("Number of Clusters (K)")
     plt.ylabel("Loss")
@@ -70,7 +65,7 @@ def find_elbow_and_plot(dataset, dataset_name):
 
     # Plot Silhouette
     plt.figure()
-    plt.errorbar(ks, avg_silhouette, yerr=silhouette_conf_intervals, capsize=5, label="Silhouette", fmt='-o')
+    plt.errorbar(range(2, 11), avg_silhouette, yerr=silhouette_conf_intervals, capsize=5, label="Silhouette", fmt='-o')
     plt.title(f"Elbow Method (Silhouette) for {dataset_name}")
     plt.xlabel("Number of Clusters (K)")
     plt.ylabel("Silhouette Score")
